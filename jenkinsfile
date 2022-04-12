@@ -35,35 +35,5 @@ pipeline {
                 }
             }
        }
-       stage('Get ansible code') {
-          when {
-                expression {choice == '1'}
-            }
-          steps{
-             
-                git "https://github.com/RinkiKundu/tomcatPlaybook.git"
-          }
-       }
-        stage('execute ansible') {
-          when {
-                expression {choice == '2'}
-            }
-          steps{
-             
-                sshagent(['ansible-ssh']) {
-                     ansiblePlaybook disableHostKeyChecking: true,  inventory: 'dev.inv', playbook: 'tomcat.yml'
-              }
-
-          }
-       }
-       stage('deploy jar in tomcat') {
-            
-          steps{
-            sshagent(['ansible-ssh']) {
-              sh "scp -r -o StrictHostKeyChecking=no target/chatapp.jar root@tomcat:/opt/tomcat/webapps"
-              }
-
-          }
-       }
     }
 }
